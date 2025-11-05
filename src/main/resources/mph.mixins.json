@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "dev.sleepy_evelyn.mph.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "create.TrainMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
