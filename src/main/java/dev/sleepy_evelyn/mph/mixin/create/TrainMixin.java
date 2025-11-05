@@ -31,6 +31,7 @@ public abstract class TrainMixin {
             at = @At(value = "CONSTANT", args = "intValue=100")
     )
     private int increaseFullRefreshDistance(int original) {
+        // Reduce navigation calls by increasing the distance before a new full calculation is made
         return (MPHConfig.CREATE_REDUCE_TRAIN_NAV_CALLS.getAsBoolean()) ? 200 : original;
     }
 }
