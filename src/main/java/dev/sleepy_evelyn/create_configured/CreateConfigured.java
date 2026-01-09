@@ -5,6 +5,7 @@ import dev.sleepy_evelyn.create_configured.compat.GriefLoggerImpl;
 import dev.sleepy_evelyn.create_configured.compat.Mods;
 import dev.sleepy_evelyn.create_configured.config.CCConfigs;
 import dev.sleepy_evelyn.create_configured.compat.GriefLoggerWrapper;
+import dev.sleepy_evelyn.create_configured.utils.TickedCacheSet;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -24,6 +25,8 @@ public class CreateConfigured {
         CCConfigs.register(container);
         if (Mods.GRIEFLOGGER.isLoaded()) griefLogger = new GriefLoggerImpl();
     }
+
+
 
     public static ResourceLocation rl(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);

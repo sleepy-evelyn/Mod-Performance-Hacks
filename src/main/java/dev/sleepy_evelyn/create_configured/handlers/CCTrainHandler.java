@@ -1,8 +1,10 @@
-package dev.sleepy_evelyn.create_configured;
+package dev.sleepy_evelyn.create_configured.handlers;
 
+import dev.sleepy_evelyn.create_configured.CreateConfigured;
 import dev.sleepy_evelyn.create_configured.client.CreateConfiguredClient;
 import dev.sleepy_evelyn.create_configured.config.CCConfigs;
 import dev.sleepy_evelyn.create_configured.network.BypassTrainDisassemblyPayload;
+import dev.sleepy_evelyn.create_configured.permissions.CCPermissionNodes;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -16,8 +18,6 @@ public class CCTrainHandler {
     public static final CCTrainHandler INSTANCE = new CCTrainHandler();
 
     private CCTrainHandler() {}
-
-    // TODO - Add an update handler for Luckperms
 
     @SubscribeEvent
     public static void onRegisterPayloadHandler(RegisterPayloadHandlersEvent e) {

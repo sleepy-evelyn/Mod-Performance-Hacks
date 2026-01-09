@@ -3,13 +3,13 @@
   "package": "dev.sleepy_evelyn.create_configured.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "SpoutBlockEntityMixin",
-    "TrackBlockMixin",
-    "TrainMixin"
+    "SpoutBlockEntityMixin"
   ],
   "server": [
     "server.StationBlockEntityMixin",
-    "server.StationBlockMixin"
+    "server.StationBlockMixin",
+    "server.TrackBlockMixin",
+    "server.TrainMixin"
   ],
   "client": [
     "client.IconButtonMixin",

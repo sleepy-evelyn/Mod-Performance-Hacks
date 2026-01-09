@@ -1,4 +1,4 @@
-package dev.sleepy_evelyn.create_configured.mixin;
+package dev.sleepy_evelyn.create_configured.mixin.server;
 
 import com.simibubi.create.content.trains.track.TrackBlock;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
@@ -27,14 +27,9 @@ public class TrackBlockMixin {
         var level = ctx.getLevel();
 
         if (ctx.getPlayer() instanceof ServerPlayer serverPlayer) {
-            var server = level.getServer();
-
-            if (server != null && server.isDedicatedServer()) {
-                if (griefLogger().isInspecting(serverPlayer))
-                    cir.setReturnValue(InteractionResult.FAIL);
-
-                griefLogger().logBreakBlock(serverPlayer, level, state, ctx.getClickedPos());
-            }
+            if (griefLogger().isInspecting(serverPlayer))
+                cir.setReturnValue(InteractionResult.FAIL);
+            griefLogger().logBreakBlock(serverPlayer, level, state, ctx.getClickedPos());
         }
     }
 }

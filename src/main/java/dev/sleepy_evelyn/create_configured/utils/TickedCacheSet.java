@@ -26,7 +26,7 @@ public class TickedCacheSet<T> extends ObjectOpenHashSet<T> {
             clearAndReset();
     }
 
-    private void clearAndReset() {
+    public void clearAndReset() {
         clear();
         trim();
         ticksUntilClear = timeoutTicks;

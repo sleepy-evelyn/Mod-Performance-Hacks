@@ -7,12 +7,10 @@ import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackH
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
-import dev.sleepy_evelyn.create_configured.CreateConfigured;
+import dev.sleepy_evelyn.create_configured.utils.UnfillableItemsCache;
 import dev.sleepy_evelyn.create_configured.config.CCConfigs;
-import dev.sleepy_evelyn.create_configured.utils.TickedCacheSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +26,6 @@ import static com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessing
 @Mixin(SpoutBlockEntity.class)
 public abstract class SpoutBlockEntityMixin extends SmartBlockEntity {
 
-    @Unique private final TickedCacheSet<ResourceLocation> cc$unfillableItems = new TickedCacheSet<>(1000, 20 * 60 * 5);
     @Shadow SmartFluidTankBehaviour tank;
 
     public SpoutBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -53,19 +50,20 @@ public abstract class SpoutBlockEntityMixin extends SmartBlockEntity {
         var transportedStack = transported.stack;
         var stackId = BuiltInRegistries.ITEM.getKey(transportedStack.getItem());
 
-        cc$unfillableItems.tick();
+        UnfillableItemsCache.INSTANCE.tick();
 
-        if (cc$unfillableItems.contains(stackId))
+        if (UnfillableItemsCache.INSTANCE.contains(stackId))
             cir.setReturnValue(PASS);
-        else if (!FillingBySpout.canItemBeFilled(level, transportedStack)) {
-            cc$unfillableItems.add(stackId);
-            cir.setReturnValue(PASS);
-        }
-
-        if (tank.isEmpty())
+        else {
+            if (!FillingBySpout.canItemBeFilled(level, transportedStack)) {
+                UnfillableItemsCache.INSTANCE.add(stackId);
+                cir.setReturnValue(PASS);
+            }
+            if (tank.isEmpty())
+                cir.setReturnValue(HOLD);
+            if (FillingBySpout.getRequiredAmountForItem(level, transported.stack, tank.getPrimaryHandler().getFluid()) == -1)
+                cir.setReturnValue(PASS);
             cir.setReturnValue(HOLD);
-        if (FillingBySpout.getRequiredAmountForItem(level, transported.stack, tank.getPrimaryHandler().getFluid()) == -1)
-            cir.setReturnValue(PASS);
-        cir.setReturnValue(HOLD);
+        }
     }
 }

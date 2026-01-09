@@ -2,7 +2,7 @@ package dev.sleepy_evelyn.create_configured.mixin.server;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.trains.station.StationBlock;
-import dev.sleepy_evelyn.create_configured.CCTrainHandler;
+import dev.sleepy_evelyn.create_configured.handlers.CCTrainHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;

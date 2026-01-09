@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public class CCServerConfig extends ConfigBase {
 
     public final ConfigBool trainCollisions = b(false, "trainCollisions",
-            "Whether to enable collisions between trains. Improved server performance.");
+            "Whether to enable collisions between trains. Improves server performance.");
 
     public final ConfigBool cacheUnfillableItems = b(true, "cacheUnfillableItems",
             "Introduces a cache for items that cannot be used in filling recipes");

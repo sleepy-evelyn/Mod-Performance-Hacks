@@ -3,7 +3,7 @@ package dev.sleepy_evelyn.create_configured.mixin.server;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.station.StationBlockEntity;
-import dev.sleepy_evelyn.create_configured.CCTrainHandler;
+import dev.sleepy_evelyn.create_configured.handlers.CCTrainHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,5 +1,6 @@
-package dev.sleepy_evelyn.create_configured;
+package dev.sleepy_evelyn.create_configured.permissions;
 
+import dev.sleepy_evelyn.create_configured.CreateConfigured;
 import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
