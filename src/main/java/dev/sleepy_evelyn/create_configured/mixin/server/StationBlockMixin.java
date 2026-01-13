@@ -2,10 +2,8 @@ package dev.sleepy_evelyn.create_configured.mixin.server;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.trains.station.StationBlock;
-import dev.sleepy_evelyn.create_configured.TrainDisassemblyLock;
 import dev.sleepy_evelyn.create_configured.config.CCConfigs;
-import dev.sleepy_evelyn.create_configured.mixin_interfaces.DisassemblyLockable;
-import dev.sleepy_evelyn.create_configured.network.BypassTrainDisassemblyPayload;
+import dev.sleepy_evelyn.create_configured.network.s2c.PrepStationScreenPayload;
 import dev.sleepy_evelyn.create_configured.utils.PermissionChecks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(StationBlock.class)
+@Mixin(value = StationBlock.class, remap = false)
 public class StationBlockMixin {
 
     @Inject(
@@ -36,11 +34,12 @@ public class StationBlockMixin {
     private void beforeOpenStationScreen(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<ItemInteractionResult> cir, @Local InteractionResult interactionResult) {
         if (interactionResult == InteractionResult.PASS) {
             var serverPlayer = (ServerPlayer) player;
-            boolean canBypassTrainDisassembly = !CCConfigs.server().lockTrainDisassembly.get() &&
+            var disassemblyLockEnabled = CCConfigs.server().lockTrainDisassembly.get();
+            boolean canBypassTrainDisassembly = !disassemblyLockEnabled &&
                     PermissionChecks.canBypassTrainDisassembly(serverPlayer);
 
             PacketDistributor.sendToPlayer(serverPlayer,
-                    new BypassTrainDisassemblyPayload(canBypassTrainDisassembly));
+                    new PrepStationScreenPayload(canBypassTrainDisassembly, disassemblyLockEnabled));
         }
     }
 }

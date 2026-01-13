@@ -19,7 +19,7 @@ import static dev.sleepy_evelyn.create_configured.CreateConfiguredServer.griefLo
                 @Condition(value = "grieflogger", versionPredicates = ">=1.2.6")
         }
 )
-@Mixin(TrackBlock.class)
+@Mixin(value = TrackBlock.class, remap = false)
 public class TrackBlockMixin {
 
     @Inject(method = "onSneakWrenched", at = @At("HEAD"), cancellable = true)

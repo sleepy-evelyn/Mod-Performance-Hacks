@@ -8,12 +8,15 @@ import dev.sleepy_evelyn.create_configured.client.CCGuiTextures;
 import dev.sleepy_evelyn.create_configured.CreateConfiguredClient;
 import dev.sleepy_evelyn.create_configured.TrainDisassemblyLock;
 import dev.sleepy_evelyn.create_configured.mixin_interfaces.GuiTaggable;
+import dev.sleepy_evelyn.create_configured.network.c2s.ChangeDisassemblyLockPayload;
+import dev.sleepy_evelyn.create_configured.utils.SideHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,6 +28,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+import static dev.sleepy_evelyn.create_configured.CreateConfiguredClient.stationScreenSynced;
+
 @Mixin(StationScreen.class)
 public abstract class StationScreenMixin extends AbstractStationScreen {
 
@@ -32,6 +37,8 @@ public abstract class StationScreenMixin extends AbstractStationScreen {
 
     @Unique private int cc$lockX, cc$lockY;
     @Unique private TrainDisassemblyLock cc$disassemblyLock = TrainDisassemblyLock.NOT_LOCKED;
+    @Unique private boolean cc$showLockButton = false;
+
     @Shadow private IconButton disassembleTrainButton;
 
     public StationScreenMixin(StationBlockEntity be, GlobalStation station) {
@@ -40,7 +47,9 @@ public abstract class StationScreenMixin extends AbstractStationScreen {
 
     @Inject(method = "init()V", at = @At("TAIL"))
     private void StationScreen(CallbackInfo ci) {
-        ((GuiTaggable) disassembleTrainButton).cc$setTag(CC$DISASSEMBLY_BUTTON_TAG);
+        cc$showLockButton = !SideHelper.inSingleplayer() && stationScreenSynced.disassemblyLockEnabled();
+        if (cc$showLockButton)
+            ((GuiTaggable) disassembleTrainButton).cc$setTag(CC$DISASSEMBLY_BUTTON_TAG);
     }
 
     @Inject(
@@ -51,6 +60,7 @@ public abstract class StationScreenMixin extends AbstractStationScreen {
             )
     )
     private void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        if (!cc$showLockButton) return;
         cc$lockX = guiLeft + 172;
         cc$lockY = guiTop + 42;
 
@@ -75,6 +85,7 @@ public abstract class StationScreenMixin extends AbstractStationScreen {
 
     @Inject(method = "mouseClicked(DDI)Z", at = @At("HEAD"), cancellable = true)
     private void mouseClicked(double pMouseX, double pMouseY, int pButton, CallbackInfoReturnable<Boolean> cir) {
+        if (!cc$showLockButton) return;
         if (pMouseX > cc$lockX && pMouseY > cc$lockY && pMouseX <= cc$lockX + 15 && pMouseY <= cc$lockY + 15) {
             boolean hasGroupProvider = !CreateConfiguredClient.groupsProviderId.contains("none");
 
@@ -85,8 +96,8 @@ public abstract class StationScreenMixin extends AbstractStationScreen {
             };
             Minecraft.getInstance().getSoundManager()
                     .play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1, 1));
-
-            // TODO - Send info to the server
+            PacketDistributor.sendToServer(new ChangeDisassemblyLockPayload(blockEntity.getBlockPos(),
+                    cc$disassemblyLock));
             cir.setReturnValue(true);
         }
     }
@@ -132,7 +143,7 @@ public abstract class StationScreenMixin extends AbstractStationScreen {
     @Unique
     @SuppressWarnings("DataFlowIssue")
     private boolean cc$canDisassemble() {
-        if (CreateConfiguredClient.canBypassTrainDisassembly) return true;
+        if (stationScreenSynced.canBypassDisassembly()) return true;
         else if (displayedTrain.get() != null) {
             var trainOwnerUuid = displayedTrain.get().owner;
             var playerUuid = Minecraft.getInstance().player.getUUID();

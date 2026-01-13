@@ -5,7 +5,7 @@ import dev.sleepy_evelyn.create_configured.compat.grieflogger.GriefLoggerImpl;
 import dev.sleepy_evelyn.create_configured.compat.grieflogger.GriefLoggerWrapper;
 import dev.sleepy_evelyn.create_configured.compat.opac.OPACGroupProvider;
 import dev.sleepy_evelyn.create_configured.groups.GroupsProvider;
-import dev.sleepy_evelyn.create_configured.network.GroupsProviderIdPayload;
+import dev.sleepy_evelyn.create_configured.network.s2c.GroupsProviderIdPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

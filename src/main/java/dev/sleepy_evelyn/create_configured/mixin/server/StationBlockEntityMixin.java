@@ -9,17 +9,20 @@ import dev.sleepy_evelyn.create_configured.utils.PermissionChecks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(StationBlockEntity.class)
+import java.util.UUID;
+
+@Mixin(value = StationBlockEntity.class, remap = false)
 public class StationBlockEntityMixin implements DisassemblyLockable {
 
-    @Unique
-    private TrainDisassemblyLock cc$disassemblyLock;
+    @Unique private TrainDisassemblyLock cc$disassemblyLock;
+    @Unique @Nullable private UUID cc$lastDisassembler = null;
 
     @Inject(
             method = "tryDisassembleTrain",
@@ -45,5 +48,15 @@ public class StationBlockEntityMixin implements DisassemblyLockable {
     @Override
     public void cc$setLock(TrainDisassemblyLock lock) {
         cc$disassemblyLock = lock;
+    }
+
+    @Override
+    public UUID cc$getLastDisassembler() {
+        return cc$lastDisassembler;
+    }
+
+    @Override
+    public void cc$setDisassembler(UUID disassembler) {
+        cc$lastDisassembler = disassembler;
     }
 }

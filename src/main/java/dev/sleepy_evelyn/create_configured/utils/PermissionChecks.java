@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -15,14 +16,16 @@ import static dev.sleepy_evelyn.create_configured.CreateConfiguredServer.groupsP
 public class PermissionChecks {
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    public static boolean canPlayerDisassembleTrain(ServerPlayer player, UUID trainOwner, TrainDisassemblyLock lock) {
+    public static boolean canPlayerDisassembleTrain(ServerPlayer player, @Nullable UUID trainOwner, TrainDisassemblyLock lock) {
         if(canBypassTrainDisassembly(player)) return true;
         return canDisassembleTrain(player.server, player.getUUID(), trainOwner, lock);
     }
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    public static boolean canDisassembleTrain(MinecraftServer server, UUID disassembler, UUID trainOwner, TrainDisassemblyLock lock) {
-        if (lock == TrainDisassemblyLock.PARTY_MEMBERS_ONLY && groupsProvider().isPresent())
+    public static boolean canDisassembleTrain(MinecraftServer server, @Nullable UUID disassembler, @Nullable UUID trainOwner, TrainDisassemblyLock lock) {
+        if (trainOwner == null) return true;
+        else if (disassembler == null) return false;
+        else if (lock == TrainDisassemblyLock.PARTY_MEMBERS_ONLY && groupsProvider().isPresent())
             return groupsProvider().get().getMemberRank(server, trainOwner, disassembler).isPresent();
         return lock != TrainDisassemblyLock.LOCKED || (disassembler.equals(trainOwner));
     }

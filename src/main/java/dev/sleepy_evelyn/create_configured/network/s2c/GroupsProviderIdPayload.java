@@ -1,4 +1,4 @@
-package dev.sleepy_evelyn.create_configured.network;
+package dev.sleepy_evelyn.create_configured.network.s2c;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
